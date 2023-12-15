@@ -1,22 +1,6 @@
 version: '3'
 
 services:
-  nginx:
-    build:
-      context: .
-      dockerfile: requirements/nginx/Dockerfile
-    container_name: nginx
-    depends_on:
-      - wordpress
-    ports:
-      - "443:443"
-    networks:
-      - inception
-    volumes:
-      - ./requirements/nginx/conf/:/etc/nginx/http.d/
-      - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/
-    restart: always
 
   mariadb:
     build:
@@ -32,6 +16,23 @@ services:
       - inception
     volumes:
       - db-volume:/var/lib/mysql
+    restart: always
+
+  nginx:
+    build:
+      context: .
+      dockerfile: requirements/nginx/Dockerfile
+    container_name: nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    volumes:
+      - ./requirements/nginx/conf/:/etc/nginx/http.d/
+      - ./requirements/nginx/tools:/etc/nginx/ssl/
+      - wp-volume:/var/www/
     restart: always
 
   adminer:
@@ -55,6 +56,13 @@ services:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - WP_ADMIN=${WP_ADMIN}
+      - WP_PASS=${WP_PASS}
     container_name: wordpress
     depends_on:
       - mariadb

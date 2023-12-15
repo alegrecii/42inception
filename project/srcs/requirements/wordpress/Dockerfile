@@ -9,6 +9,7 @@ RUN apk update && apk upgrade && apk add --no-cache \
     php${PHP_VERSION}-mysqli \
     php${PHP_VERSION}-json \
     php${PHP_VERSION}-curl \
+    php${PHP_VERSION}-phar \
     php${PHP_VERSION}-dom \
     php${PHP_VERSION}-exif \
     php${PHP_VERSION}-fileinfo \
@@ -17,6 +18,7 @@ RUN apk update && apk upgrade && apk add --no-cache \
     php${PHP_VERSION}-xml \
     php${PHP_VERSION}-zip \
     php${PHP_VERSION}-redis \
+    curl \
     wget \
     unzip && \
     sed -i "s|listen = 127.0.0.1:9000|listen = 9000|g" \
@@ -32,6 +34,4 @@ RUN wget https://wordpress.org/latest.zip && \
     cp -rf wordpress/* . && \
     rm -rf wordpress latest.zip
 COPY ./requirements/wordpress/conf/wp-config-create.sh .
-RUN sh wp-config-create.sh && rm wp-config-create.sh && \
-    chmod -R 0777 wp-content/
-CMD ["/usr/sbin/php-fpm81", "-F"]
+CMD ["sh", "wp-config-create.sh"]
